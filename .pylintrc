@@ -15,4 +15,4 @@ disable=no-else-return,
         global-statement,
         missing-module-docstring
 
-const-naming-style=snake_case, UPPER_CASE
+const-naming-style=any

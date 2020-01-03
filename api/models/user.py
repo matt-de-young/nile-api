@@ -3,13 +3,13 @@ from pydantic import BaseModel
 
 class UserIn(BaseModel):
     email: str
-    _password: bytes
+    password: str
     pseudonym: str
 
 class User(BaseModel):
     id: str
     email: str
-    _password: bytes
+    _password: str
     pseudonym: str
     created_at: datetime
     modified_at: datetime

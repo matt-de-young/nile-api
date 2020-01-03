@@ -7,6 +7,7 @@ from sqlalchemy.sql import func
 
 from api.main import database, metadata
 from api.models.book import Book, BookIn
+from api.models.user import User
 
 
 books = Table(
@@ -31,11 +32,12 @@ async def list_books(user_id:str = None) -> List[Book]:
         query = query.where(books.c.user_id == user_id)
     return await database.fetch_all(query)
 
-async def create_book(book: BookIn) -> Book:
+async def create_book(book: BookIn, user: User) -> Book:
     book_id: str = str(uuid4())
     query = books.insert().values(
         **book.dict(),
-        id=book_id
+        id=book_id,
+        user_id=user.id
     )
     await database.execute(query)
     return await get_book(book_id=book_id)

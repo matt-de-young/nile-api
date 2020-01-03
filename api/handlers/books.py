@@ -1,9 +1,11 @@
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from api.models.user import User
 from api.models.book import Book, BookIn
 from api.store import book as book_store
+from api.auth import get_current_user
 
 
 router = APIRouter()
@@ -14,5 +16,5 @@ async def read_books(user_id: str = None):
 
 
 @router.post("/", response_model=Book)
-async def create_book(book: BookIn):
-    return await book_store.create_book(book)
+async def create_book(book: BookIn, user: User = Depends(get_current_user)):
+    return await book_store.create_book(book, user=user)
