@@ -1,0 +1,18 @@
+[PYLINT]
+
+jobs=0
+
+logging-format-style=new
+
+notes=TODO
+
+min-public-methods=1
+
+good-names=i, j, k, q, n, x, ex, _,
+
+disable=no-else-return,
+        no-else-raise,
+        global-statement,
+        missing-module-docstring
+
+const-naming-style=snake_case, UPPER_CASE
