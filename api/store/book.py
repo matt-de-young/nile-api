@@ -20,23 +20,34 @@ books = Table(
     Column("user_id", String(36), ForeignKey("users.id"), nullable=False),
     Column("price_in_eur", DECIMAL(9, 2)),
     Column("created_at", DateTime, server_default=func.datetime("now"), nullable=False),
-    Column("modified_at", DateTime, server_default=func.datetime("now"), onupdate=func.datetime("now"), nullable=False)
+    Column(
+        "modified_at",
+        DateTime,
+        server_default=func.datetime("now"),
+        onupdate=func.datetime("now"),
+        nullable=False
+    )
 )
 
 async def get_book(book_id: str) -> Book:
+    """ Returns a Book with the given id. """
     query = select([
         books,
-        users.c.pseudonym.label('author')]
-    ).select_from(books.join(users)).where(books.c.id == book_id)
+        users.c.pseudonym.label('author')
+    ]).select_from(books.join(users)).where(books.c.id == book_id)
     return await database.fetch_one(query)
 
 
-async def list_books(user_id:str = None) -> List[Book]:
+async def list_books(user_id: str = None) -> List[Book]:
+    """ Lists Books matching the provided parameters. """
     query = select([books, users.c.pseudonym.label('author')]).select_from(books.join(users))
+    if user_id:
+        query = query.where(books.c.user_id == user_id)
     return await database.fetch_all(query)
 
 
 async def create_book(book: BookIn, user: User) -> Book:
+    """ Creates & returns a Book. """
     book_id: str = str(uuid4())
     query = books.insert().values(
         **book.dict(),
@@ -48,5 +59,6 @@ async def create_book(book: BookIn, user: User) -> Book:
 
 
 async def delete_book(book_id: str) -> None:
+    """ Deletes a Book with the given id. """
     query = books.delete().where(books.c.id == book_id)
     await database.fetch_one(query)

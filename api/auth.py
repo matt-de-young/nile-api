@@ -2,14 +2,14 @@ from datetime import datetime, timedelta
 
 import jwt
 from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
 
 from api.main import oauth2_scheme, JWT_SECRET_KEY, JWT_EXPIRATION_MINUTES, JWT_ALGORITHM
 from api.models.user import User
 from api.store import user as user_store
 
 
-def create_jwt(user: User):
+def create_jwt(user: User) -> bytes:
+    """ Creates a JWT for the User. """
     return jwt.encode(
         {
             "sub": user.id,
@@ -19,7 +19,9 @@ def create_jwt(user: User):
         algorithm=JWT_ALGORITHM
     )
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
+    """ Returns the user decoded from a JWT. """
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",

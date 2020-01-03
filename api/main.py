@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI
 from fastapi.security import OAuth2PasswordBearer
 import databases
 import sqlalchemy
@@ -21,17 +21,22 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
 @app.on_event("startup")
 async def startup():
+    """ Runs when the server is started. """
     await database.connect()
 
 
 @app.on_event("shutdown")
 async def shutdown():
+    """ Runs when the server is stopped gracefully. """
     await database.disconnect()
 
 
 from api.handlers import books, users, token
 
-app.include_router(token.router)
+app.include_router(
+    token.router,
+    tags=["auth"]
+)
 app.include_router(
     users.router,
     prefix="/users",
