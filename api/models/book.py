@@ -14,6 +14,7 @@ class Book(BaseModel):
     title: str
     description: Optional[str]
     user_id: str
+    author: Optional[str]
     price_in_eur: Optional[float]
     created_at: datetime
     modified_at: datetime
