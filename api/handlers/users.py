@@ -21,6 +21,6 @@ async def read_user(user_id: str):
 
 
 @router.post("/", response_model=User)
-async def create_user(book: UserIn):
+async def create_user(user: UserIn):
     """ Create a new User. """
-    return await user_store.create_user(book)
+    return await user_store.create_user(user)

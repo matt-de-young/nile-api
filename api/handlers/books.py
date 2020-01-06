@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -11,8 +11,19 @@ from api.auth import get_current_user
 router = APIRouter()
 
 @router.get("/", response_model=List[Book])
-async def read_books(user_id: str = None, q: str = None):
+async def read_books(user_id: str = None, q: str = None, sort: str = None):
     """ List all Books. """
+    if sort:
+        if sort[0] == "-":
+            sort = sort[1:]
+            sort_order = "desc"
+        elif sort[0] == "+":
+            sort = sort[1:]
+            sort_order = "asc"
+        else:
+            sort_order = "asc"
+
+        return await book_store.list_books(user_id, q, sort_col=sort, sort_order=sort_order)
     return await book_store.list_books(user_id, q)
 
 

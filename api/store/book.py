@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Optional
 from uuid import uuid4
 
+from fastapi import HTTPException
 from sqlalchemy import Column, Table, ForeignKey
 from sqlalchemy.types import String, DateTime, DECIMAL
 from sqlalchemy.sql import func, select, or_
@@ -38,7 +39,12 @@ async def get_book(book_id: str) -> Book:
     return await database.fetch_one(query)
 
 
-async def list_books(user_id: str = None, q: str = None) -> List[Book]:
+async def list_books(
+        user_id: str = None,
+        q: str = None,
+        sort_col: Optional[str] = "modified_at",
+        sort_order: Optional[str] = "desc"
+) -> List[Book]:
     """ Lists Books matching the provided parameters. """
     query = select([books, users.c.pseudonym.label('author')]).select_from(books.join(users))
     if user_id:
@@ -48,6 +54,15 @@ async def list_books(user_id: str = None, q: str = None) -> List[Book]:
             books.c.title.ilike(f"%{q}%"),
             books.c.description.ilike(f"%{q}%")
         ))
+
+    try:
+        query = query.order_by(getattr(getattr(books.c, sort_col), sort_order)())
+    except AttributeError as ex:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid sort parameter '{ex}'.",
+        )
+
     return await database.fetch_all(query)
 
 
