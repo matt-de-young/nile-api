@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from sqlalchemy import Column, Table, ForeignKey
 from sqlalchemy.types import String, DateTime, DECIMAL
-from sqlalchemy.sql import func, select
+from sqlalchemy.sql import func, select, or_
 
 from api.main import database, metadata
 from api.models.book import Book, BookIn
@@ -38,11 +38,16 @@ async def get_book(book_id: str) -> Book:
     return await database.fetch_one(query)
 
 
-async def list_books(user_id: str = None) -> List[Book]:
+async def list_books(user_id: str = None, q: str = None) -> List[Book]:
     """ Lists Books matching the provided parameters. """
     query = select([books, users.c.pseudonym.label('author')]).select_from(books.join(users))
     if user_id:
         query = query.where(books.c.user_id == user_id)
+    if q:
+        query = query.where(or_(
+            books.c.title.ilike(f"%{q}%"),
+            books.c.description.ilike(f"%{q}%")
+        ))
     return await database.fetch_all(query)
 
 

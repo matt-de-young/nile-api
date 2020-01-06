@@ -11,9 +11,9 @@ from api.auth import get_current_user
 router = APIRouter()
 
 @router.get("/", response_model=List[Book])
-async def read_books(user_id: str = None):
+async def read_books(user_id: str = None, q: str = None):
     """ List all Books. """
-    return await book_store.list_books(user_id)
+    return await book_store.list_books(user_id, q)
 
 
 @router.post("/", response_model=Book)
