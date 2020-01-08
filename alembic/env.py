@@ -1,3 +1,5 @@
+import os
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -10,14 +12,15 @@ from api.main import metadata
 # access to the values within the .ini file in use.
 config = context.config
 
+# Set the `sqlalchemy.url` based on an env var.
+config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL", "sqlite:///./test.db"))
+
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
 target_metadata = metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -65,7 +68,8 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata
         )
 
         with context.begin_transaction():

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 from uuid import uuid4
 
@@ -18,12 +19,12 @@ users = Table(
     Column("email", String(128), unique=True, nullable=False),
     Column("_password", LargeBinary(60)),
     Column("pseudonym", String(128)),
-    Column("created_at", DateTime, server_default=func.datetime("now"), nullable=False),
+    Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column(
         "modified_at",
         DateTime,
-        server_default=func.datetime("now"),
-        onupdate=func.datetime("now"),
+        server_default=func.now(),
+        onupdate=func.now(),
         nullable=False
     )
 )

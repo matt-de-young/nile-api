@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from uuid import uuid4
 
@@ -20,12 +21,12 @@ books = Table(
     Column("description", String),
     Column("user_id", String(36), ForeignKey("users.id"), nullable=False),
     Column("price_in_eur", DECIMAL(9, 2)),
-    Column("created_at", DateTime, server_default=func.datetime("now"), nullable=False),
+    Column("created_at", DateTime, server_default=func.now(), nullable=False),
     Column(
         "modified_at",
         DateTime,
-        server_default=func.datetime("now"),
-        onupdate=func.datetime("now"),
+        server_default=func.now(),
+        onupdate=func.now(),
         nullable=False
     )
 )

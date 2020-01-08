@@ -1,19 +1,20 @@
+
+import os
+
 from fastapi import FastAPI
 from fastapi.security import OAuth2PasswordBearer
 import databases
 import sqlalchemy
 
 
-DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = os.getenv("DATABASE_URL")
 JWT_ALGORITHM = "HS256"
 JWT_SECRET_KEY = "4702b7871304fa054bf0487c961b27c7536fab03a4a77478a6b50a11104b92d1"
 JWT_EXPIRATION_MINUTES = 15
 
 database = databases.Database(DATABASE_URL)
 metadata = sqlalchemy.MetaData()
-engine = sqlalchemy.create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine = sqlalchemy.create_engine(DATABASE_URL)
 metadata.create_all(engine)
 
 app = FastAPI()
