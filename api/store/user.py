@@ -65,7 +65,7 @@ async def validate_user_password(email: str, password_guess: str):
     """ Returns a User if email matches &  password guess is correct. """
     user = await get_user_by_email(email)
 
-    if not bcrypt.checkpw(password_guess.encode(), user._password):
+    if not bcrypt.checkpw(password_guess.encode(), user["_password"]):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
     return user

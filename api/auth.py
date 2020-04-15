@@ -12,7 +12,7 @@ def create_jwt(user: User) -> bytes:
     """ Creates a JWT for the User. """
     return jwt.encode(
         {
-            "sub": user.id,
+            "sub": user["id"],
             "exp": datetime.utcnow() + timedelta(minutes=JWT_EXPIRATION_MINUTES)
         },
         JWT_SECRET_KEY,
